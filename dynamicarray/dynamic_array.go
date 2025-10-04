@@ -1,4 +1,4 @@
-package main
+package dynamicarray
 
 import (
 	"errors"
@@ -37,13 +37,13 @@ func (da *DynamicArray[T]) checkRangeFromIndex(index int) error {
 	return nil
 }
 
-// Выделения увеличение размера памяти,выделяемого по массив
+// Выделения увеличение размера памяти,выделяемого под массив
 func (da *DynamicArray[T]) newCapacity() {
-	da.capacity = da.capacity * 2
+	da.capacity = da.capacity << 1
 	newArr := make([]T, da.capacity)
 	copy(newArr, da.arr)
 	da.arr = newArr
-	fmt.Printf("New capacity = %d\n", da.capacity)
+
 }
 
 func (da *DynamicArray[T]) IsEmpty() bool {
@@ -58,7 +58,7 @@ func (da *DynamicArray[T]) Add(element T) {
 
 	da.arr[da.length] = element
 	da.length++
-	fmt.Printf("Current state: %+v\n", *da)
+
 }
 
 // Удаление элемнта по индексу
@@ -70,6 +70,26 @@ func (da *DynamicArray[T]) Remove(index int) error {
 	copy(da.arr[index:], da.arr[index+1:da.length])
 	da.arr[da.length-1] = *new(T)
 	da.length--
-	fmt.Printf("Current state: %+v\n", *da)
+
+	return nil
+}
+
+// Получение занчения элемнта по индексу
+func (da *DynamicArray[T]) Get(index int) (T, error) {
+	err := da.checkRangeFromIndex(index)
+	if err != nil {
+		return *new(T), err
+	}
+	return da.arr[index], nil
+}
+
+// Обновление значения элемента массива
+func (da *DynamicArray[T]) Put(index int, elenent T) error {
+	err := da.checkRangeFromIndex(index)
+	if err != nil {
+		return err
+	}
+	da.arr[index] = elenent
+
 	return nil
 }
